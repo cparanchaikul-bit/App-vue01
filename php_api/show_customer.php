@@ -1,7 +1,6 @@
 <?php
 include 'condb.php';
 
-header('Content-Type: application/json');
 
 try {
     $stmt = $conn->query("SELECT * FROM customers");

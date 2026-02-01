@@ -1,23 +1,41 @@
 <template>
   <div class="container mt-4">
-    <h2 class="mb-3">เครื่องเขียน</h2>
+    <h2 class="mb-3">แสดงข้อมูลสินค้า</h2>
     
     <!-- ตารางแสดงข้อมูลลูกค้า -->
     <table class="table table-bordered table-striped">
       <thead class="table-dark">
         <tr>
-          <th>รหัสประเภท</th>
-          <th>ชื่อประเภท</th>
+          <th>ลำดับที่</th>
+          <th>รหัสสินค้า</th>
+          <th>ชื่อสินค้า</th>
+          <th>รายละเอียด</th>
+          <th>ราคา</th>
+          <th>รูปภาพ</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="type in types" :key="type.type_id">
-          <td>{{ type.type_id }}</td>
-          <td>{{ type.type_name }}</td>
-
+        <tr v-for="(data,index) in Alldata" :key="data.id">
+          <td>{{ index + 1 }}</td>   <!--แสดงลำดับที่-->
+          <td>{{ data.product_id }}</td>
+          <td>{{ data.title }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.price }}</td>
+         <td>
+        <img
+            :src="data.image"
+            width="150"
+            height="150" >
+          </td>
         </tr>
       </tbody>
     </table>
+
+
+     <div class="mb-3 text-end">
+      <a class="btn btn-primary" href="#" role="button">Add+</a>
+    </div>
+
 
     <!-- Loading -->
     <div v-if="loading" class="text-center">
@@ -35,20 +53,20 @@
 import { ref, onMounted } from "vue";
 
 export default {
-  name: "TypeList",
+  name: "DataList",
   setup() {
-    const types = ref([]);
+    const Alldata = ref([]);
     const loading = ref(true);
     const error = ref(null);
 
     // ฟังก์ชันดึงข้อมูลจาก API
-    const fetchTypes = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost/App-vue01/php_api/show_type.php");
+        const response = await fetch("https://fakestoreapi.com/products");
         if (!response.ok) {
           throw new Error("ไม่สามารถดึงข้อมูลได้");
         }
-        types.value = await response.json();
+        Alldata.value = await response.json();
       } catch (err) {
         error.value = err.message;
       } finally {
@@ -57,11 +75,11 @@ export default {
     };
 
     onMounted(() => {
-      fetchTypes();
+      fetchData();
     });
 
     return {
-      types,
+      Alldata,
       loading,
       error
     };

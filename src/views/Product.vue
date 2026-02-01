@@ -1,36 +1,41 @@
 <template>
   <div class="container mt-4">
-    <h2 class="mb-3">รายชื่อลูกค้า</h2>
-
-
-
+    <h2 class="mb-3">แสดงข้อมูลสินค้า</h2>
+    
     <!-- ตารางแสดงข้อมูลลูกค้า -->
     <table class="table table-bordered table-striped">
       <thead class="table-dark">
         <tr>
           <th>ลำดับที่</th>
-          <th>รหัสลูกค้า</th>
-          <th>ชื่อ</th>
-          <th>นามสกุล</th>
-          <th>เบอร์โทร</th>
-          <th>ชื่อผู้ใช้</th>
+          <th>รหัสสินค้า</th>
+          <th>ชื่อสินค้า</th>
+          <th>รายละเอียด</th>
+          <th>ราคา</th>
+          <th>จำนวน</th>
+          <th>รูปภาพ</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(customer,index) in customers" :key="customer.customer_id">
+        <tr v-for="(data,index) in Alldata" :key="data.product_id">
           <td>{{ index + 1 }}</td>   <!--แสดงลำดับที่-->
-          <td>{{ customer.customer_id }}</td>
-          <td>{{ customer.firstName }}</td>
-          <td>{{ customer.lastName }}</td>
-          <td>{{ customer.phone }}</td>
-          <td>{{ customer.username }}</td>
+          <td>{{ data.product_id }}</td>
+          <td>{{ data.product_name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.price }}</td>
+          <td>{{ data.stock }}</td>
+         <td>
+        <img
+            :src="'http://localhost/App-vue01/php_api/image/' + data.image"
+            width="150"
+            height="150" >
+          </td>
         </tr>
       </tbody>
     </table>
 
 
-    <div class="mb-3 text-end">
-    <a class="btn btn-primary" href="/add_customer" role="button">Add+</a>
+     <div class="mb-3 text-end">
+      <a class="btn btn-primary" href="#" role="button">Add+</a>
     </div>
 
 
@@ -50,20 +55,20 @@
 import { ref, onMounted } from "vue";
 
 export default {
-  name: "CustomerList",
+  name: "DataList",
   setup() {
-    const customers = ref([]);
+    const Alldata = ref([]);
     const loading = ref(true);
     const error = ref(null);
 
     // ฟังก์ชันดึงข้อมูลจาก API
-    const fetchCustomers = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost/App-vue01/php_api/show_customer.php");
+        const response = await fetch("http://localhost/App-vue01/php_api/show_product.php");
         if (!response.ok) {
           throw new Error("ไม่สามารถดึงข้อมูลได้");
         }
-        customers.value = await response.json();
+        Alldata.value = await response.json();
       } catch (err) {
         error.value = err.message;
       } finally {
@@ -72,11 +77,11 @@ export default {
     };
 
     onMounted(() => {
-      fetchCustomers();
+      fetchData();
     });
 
     return {
-      customers,
+      Alldata,
       loading,
       error
     };
